@@ -23,7 +23,7 @@ import numpy as np
 from scipy import sparse
 
 from src.community.detect import detect_communities, modularity
-from src.community.summarize import summarize_communities
+from src.community.summarize import document_label, summarize_communities
 from src.config import ExperimentConfig
 from src.data.load_corpus import Document, load_corpus
 from src.graph.build_graph import build_igraph, sparsify
@@ -115,7 +115,7 @@ def _graph(
     graph = build_igraph(
         sparse_weights,
         doc_ids=[d.doc_id for d in documents],
-        titles=[d.title for d in documents],
+        titles=[document_label(d) for d in documents],
     )
     graph.write_graphml(path)
     return graph
@@ -166,7 +166,7 @@ def run(cfg: ExperimentConfig) -> dict:
                 "community_id": s.community_id,
                 "size": s.size,
                 "top_ngrams": s.top_ngrams,
-                "sample_titles": s.sample_titles,
+                "sample_documents": [asdict(d) for d in s.sample_documents],
             }
             for s in summaries
         ],
@@ -177,4 +177,24 @@ def run(cfg: ExperimentConfig) -> dict:
     with open(report_path, "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
     result["report_path"] = report_path
+
+    # Человекочитаемый отчёт: по каждому сообществу — метка из топ-n-грамм и
+    # примеры документов с фрагментами текста, чтобы глазами видеть содержимое.
+    text_path = os.path.join(cfg.output_dir, "communities.txt")
+    with open(text_path, "w", encoding="utf-8") as f:
+        f.write(f"Документов: {result['n_documents']}, узлов: {result['n_nodes']}, "
+                f"рёбер: {result['n_edges']}\n")
+        f.write(f"Алгоритм: {cfg.community.algorithm}, сообществ: {result['n_communities']}, "
+                f"модулярность: {result['modularity']:.4f}\n")
+        f.write("=" * 80 + "\n\n")
+        for s in summaries:
+            label = ", ".join(ng for ng, _ in s.top_ngrams[:10])
+            f.write(f"Сообщество {s.community_id} (документов: {s.size})\n")
+            f.write(f"  Метка (топ-n-граммы): {label}\n")
+            f.write("  Примеры документов:\n")
+            for d in s.sample_documents:
+                f.write(f"    - [{d.doc_id}] {d.title}\n")
+                f.write(f"      {d.text_snippet}\n")
+            f.write("\n")
+    result["text_report_path"] = text_path
     return result
