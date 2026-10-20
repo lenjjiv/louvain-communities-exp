@@ -8,3 +8,4 @@ pyvis
 pymorphy3
 pymorphy3-dicts-ru
 nltk
+tqdm

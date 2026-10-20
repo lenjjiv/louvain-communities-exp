@@ -15,13 +15,17 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from functools import lru_cache
 
 import pymorphy3
 from nltk.stem.snowball import SnowballStemmer
+from tqdm import tqdm
 
 from src.config import PreprocessConfig
+
+logger = logging.getLogger(__name__)
 
 # Русские стоп-слова: частотные служебные слова, которые не несут тематики и
 # только зашумляют пересечение документов.

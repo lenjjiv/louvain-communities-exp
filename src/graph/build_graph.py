@@ -13,11 +13,16 @@
 
 from __future__ import annotations
 
+import logging
+
 import igraph as ig
 import numpy as np
 from scipy import sparse
+from tqdm import tqdm
 
 from src.config import SparsifyConfig
+
+logger = logging.getLogger(__name__)
 
 
 def _topk_sparsify(weights: sparse.csr_matrix, k: int) -> sparse.csr_matrix:
@@ -32,7 +37,7 @@ def _topk_sparsify(weights: sparse.csr_matrix, k: int) -> sparse.csr_matrix:
     cols: list[int] = []
     data: list[float] = []
 
-    for i in range(n):
+    for i in tqdm(range(n), desc="top-k sparsify", unit="node"):
         start, end = weights.indptr[i], weights.indptr[i + 1]
         if start == end:
             continue

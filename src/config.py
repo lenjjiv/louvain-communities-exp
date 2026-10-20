@@ -24,7 +24,7 @@ class DataConfig:
     corpus_path: str = "data/RuBQRetrieval/corpus/test-00000-of-00001.parquet"
     # Подвыборка нужна для быстрой отладки: полный корпус — 56k документов,
     # на нём матрица пересечений n-грамм слишком тяжёлая для итераций.
-    sample_size: int = 2000
+    sample_size: int = 10_000
     seed: int = 42
 
 
@@ -40,7 +40,7 @@ class PreprocessConfig:
     # Отсечение слишком редких и слишком частых n-грамм по числу документов.
     min_doc_freq: int = 2
     max_doc_freq: float = 0.5
-    max_vocab: int = 20000
+    max_vocab: int = 50000
 
 
 @dataclass
@@ -71,6 +71,9 @@ class CommunityConfig:
     resolution: float = 1.0
     n_iterations: int = 2
     seed: int = 42
+    # Сообщества меньше этого размера отбрасываются из отчётов: одиночные
+    # документы и микрогруппы — это шум разреживания, а не тематические кластеры.
+    min_community_size: int = 10
 
 
 @dataclass

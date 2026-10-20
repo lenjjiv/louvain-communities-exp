@@ -17,10 +17,15 @@
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 from scipy import sparse
+from tqdm import tqdm
 
 from src.config import WeightingConfig
+
+logger = logging.getLogger(__name__)
 
 
 def build_doc_term_matrix(
@@ -43,7 +48,7 @@ def build_doc_term_matrix(
     n_docs = len(doc_ngrams)
     rows: list[int] = []
     cols: list[int] = []
-    for i, ngrams in enumerate(doc_ngrams):
+    for i, ngrams in enumerate(tqdm(doc_ngrams, desc="doc-term matrix", unit="doc")):
         for ng in ngrams:
             rows.append(i)
             cols.append(vocab[ng])

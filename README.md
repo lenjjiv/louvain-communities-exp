@@ -48,6 +48,7 @@ uv pip install --python .venv/bin/python -r requirements.txt
 | `community.resolution` | float | масштаб сообществ (больше — мельче) |
 | `community.n_iterations` | int | итерации Leiden (Louvain игнорирует) |
 | `community.seed` | int | зерно Leiden (Louvain детерминирован) |
+| `community.min_community_size` | int | сообщества меньше этого размера не попадают в отчёты |
 | `viz.max_nodes` | int | число узлов на интерактивной картинке |
 
 ## Кэширование
@@ -57,16 +58,25 @@ uv pip install --python .venv/bin/python -r requirements.txt
 переиспользует готовый граф мгновенно, а смена `preprocess.mode` пересчитает
 n-граммы. Это даёт быструю обратную связь при переборе ручек.
 
+## Логирование и прогресс
+
+Статус стадий пишется в консоль и в `run.log` (время, уровень, модуль), а
+тяжёлые циклы (предобработка, матрица «документ × n-грамма», top-k
+разреживание) показывают прогресс-бар tqdm.
+
 ## Результаты
 
 - `outputs/graph.html` — интерактивный граф (PyVis), цвет = сообщество.
 - `outputs/report.json` — модулярность, число сообществ, топ-n-граммы и
-  примеры заголовков по каждому сообществу.
+  примеры документов по каждому сообществу.
+- `outputs/communities.txt` — человекочитаемый отчёт: по каждому сообществу
+  метка из топ-n-грамм и примеры документов с фрагментами текста.
 
 ## Структура
 
 ```
 src/config.py              конфиг (dataclass) + CLI-оверрайды
+src/logging_setup.py       настройка логирования (консоль + run.log)
 src/data/load_corpus.py    загрузка корпуса с подвыборкой
 src/graph/preprocess.py    токенизация, нормализация, n-граммы
 src/graph/cooccurrence.py  матрица пересечений n-грамм + взвешивание

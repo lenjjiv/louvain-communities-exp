@@ -53,14 +53,21 @@ def summarize_communities(
     top_ngrams: int = 15,
     sample_docs: int = 5,
     snippet_len: int = 300,
+    min_size: int = 1,
 ) -> list[CommunitySummary]:
-    """Строит сводки по всем сообществам, отсортированные по размеру."""
+    """Строит сводки по сообществам, отсортированные по размеру.
+
+    Сообщества размером меньше ``min_size`` пропускаются: микрогруппы и
+    одиночные документы — это шум разреживания, а не тематические кластеры.
+    """
     groups: dict[int, list[int]] = {}
     for idx, comm in enumerate(membership):
         groups.setdefault(comm, []).append(idx)
 
     summaries: list[CommunitySummary] = []
     for comm, members in groups.items():
+        if len(members) < min_size:
+            continue
         counter: Counter[str] = Counter()
         for idx in members:
             counter.update(doc_ngrams[idx])
