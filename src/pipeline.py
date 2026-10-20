@@ -87,14 +87,14 @@ def _preprocess(
 
 
 def _weights(
-    doc_ngrams: list[set[str]], cfg: ExperimentConfig
+    doc_ngrams: list[set[str]], documents: list[Document], cfg: ExperimentConfig
 ) -> sparse.csr_matrix:
     """Считает матрицу весов рёбер с кэшированием по параметрам."""
     key = _hash(
         {
             "preprocess": asdict(cfg.preprocess),
             "weighting": asdict(cfg.weighting),
-            "n_docs": len(doc_ngrams),
+            "doc_ids": [d.doc_id for d in documents],
         }
     )
     path = _cache_path(cfg.cache_dir, "weights", key, "npz")
@@ -127,9 +127,10 @@ def _graph(
     """Строит граф igraph с кэшированием по параметрам разреживания."""
     key = _hash(
         {
+            "preprocess": asdict(cfg.preprocess),
             "sparsify": asdict(cfg.sparsify),
             "weighting": asdict(cfg.weighting),
-            "n_docs": len(documents),
+            "doc_ids": [d.doc_id for d in documents],
         }
     )
     path = _cache_path(cfg.cache_dir, "graph", key, "graphml")
@@ -167,7 +168,7 @@ def run(cfg: ExperimentConfig) -> dict:
     logger.info("Предобработка: %.2f с", timings["preprocess"])
 
     t0 = time.perf_counter()
-    weights = _weights(doc_ngrams, cfg)
+    weights = _weights(doc_ngrams, documents, cfg)
     timings["weights"] = time.perf_counter() - t0
     logger.info("Веса: %.2f с", timings["weights"])
 
