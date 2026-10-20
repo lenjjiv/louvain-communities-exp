@@ -221,7 +221,8 @@ __marimo__/
 
 # Эксперимент: кэш стадий, результаты и логи прогонов
 cache/
-outputs/
+outputs/*
+!outputs/communities.txt
 run.log
 
 # Скачанный датасет (тяжёлые parquet-файлы)
