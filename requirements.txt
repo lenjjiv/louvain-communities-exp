@@ -1,0 +1,10 @@
+datasets
+huggingface_hub
+pyarrow
+scipy
+igraph
+leidenalg
+pyvis
+pymorphy3
+pymorphy3-dicts-ru
+nltk
