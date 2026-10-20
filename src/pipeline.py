@@ -192,6 +192,9 @@ def run(cfg: ExperimentConfig) -> dict:
         membership,
         doc_ngrams,
         documents,
+        top_ngrams=cfg.report.top_ngrams,
+        sample_docs=cfg.report.sample_docs,
+        snippet_len=cfg.report.snippet_len,
         min_size=cfg.community.min_community_size,
     )
 
@@ -237,7 +240,7 @@ def run(cfg: ExperimentConfig) -> dict:
                 f"модулярность: {result['modularity']:.4f}\n")
         f.write("=" * 80 + "\n\n")
         for s in summaries:
-            label = ", ".join(ng for ng, _ in s.top_ngrams[:10])
+            label = ", ".join(ng for ng, _ in s.top_ngrams)
             f.write(f"Сообщество {s.community_id} (документов: {s.size})\n")
             f.write(f"  Метка (топ-n-граммы): {label}\n")
             f.write("  Примеры документов:\n")

@@ -77,6 +77,18 @@ class CommunityConfig:
 
 
 @dataclass
+class ReportConfig:
+    """Содержимое отчётов по сообществам (report.json и communities.txt)."""
+
+    # Сколько самых частых n-грамм показывать как метку сообщества.
+    top_ngrams: int = 15
+    # Сколько примеров документов приводить на сообщество.
+    sample_docs: int = 5
+    # Длина фрагмента текста документа в примере (символов).
+    snippet_len: int = 300
+
+
+@dataclass
 class VizConfig:
     """Визуализация графа через PyVis."""
 
@@ -94,6 +106,7 @@ class ExperimentConfig:
     weighting: WeightingConfig = field(default_factory=WeightingConfig)
     sparsify: SparsifyConfig = field(default_factory=SparsifyConfig)
     community: CommunityConfig = field(default_factory=CommunityConfig)
+    report: ReportConfig = field(default_factory=ReportConfig)
     viz: VizConfig = field(default_factory=VizConfig)
     cache_dir: str = "cache"
     output_dir: str = "outputs"

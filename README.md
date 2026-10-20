@@ -49,6 +49,9 @@ uv pip install --python .venv/bin/python -r requirements.txt
 | `community.n_iterations` | int | итерации Leiden (Louvain игнорирует) |
 | `community.seed` | int | зерно Leiden (Louvain детерминирован) |
 | `community.min_community_size` | int | сообщества меньше этого размера не попадают в отчёты |
+| `report.top_ngrams` | int | сколько топ-n-грамм показывать как метку сообщества |
+| `report.sample_docs` | int | сколько примеров документов приводить на сообщество |
+| `report.snippet_len` | int | длина фрагмента текста документа в примере (символов) |
 | `viz.max_nodes` | int | число узлов на интерактивной картинке |
 
 ## Кэширование
